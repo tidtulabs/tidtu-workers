@@ -69,7 +69,7 @@ export const fetchExamList = async (c: Context) => {
 				? JSON.parse(cachedExamList)
 				: null;
 			return {
-				data: cachedData?.data,
+				data: cachedData?.data || [],
 				meta: cachedData?.meta,
 			};
 		}
@@ -85,29 +85,36 @@ export const fetchExamList = async (c: Context) => {
 			examData.time === cachedData?.data[0]?.uploadDate
 		) {
 			return {
-				data: cachedData?.data,
+				data: cachedData?.data || [], 
 				meta: cachedData?.meta,
 			};
 		} else {
 			const isUpdated = await c.env.CACHE_TIDTU.get("isUpdated");
 			if (!isUpdated) {
-				const URL = `${c.env.CACHE_SERVICE_API}/api/v1/pdaotao/scraping/examlist`;
-				// console.log("URL", URL);
-				fetch(URL, {
-					method: "PUT",
-				})
-					.then((response) => {
-						// console.log("Success:", response);
-					})
-					.catch((error) => {
-						// console.error("Error occurred:", error);
-					});
+				// 	const URL = `${c.env.CACHE_SERVICE_API}/api/v1/pdaotao/scraping/cache`;
+				// 	console.log("URL", URL);
+				// 	fetch(URL, {
+				// 		method: "PUT",
+				// 	})
+				// 		.then((response) => {
+				// 			// console.log("Success:", response);
+				// 		})
+				// 		.catch((error) => {
+				// 			// console.error("Error occurred:", error);
+				// 		});
+				return {
+					data: cachedData?.data || [],
+					meta: {
+						...cachedData?.meta,
+						shouldUpdate: true,
+					},
+				};
 			}
-			return {
-				data: cachedData?.data,
-				meta: cachedData?.meta,
-			};
 		}
+		return {
+			data: cachedData?.data || [],
+			meta: cachedData?.meta,
+		};
 	} catch (error: any) {
 		// logger.error(error.message);
 		// console.log("error", error);
@@ -145,7 +152,6 @@ export const resolveExamDownloadLink = async (c: Context) => {
 	}
 	const url = await getLinkDownLoad(`EXAM_LIST_Detail/?ID=${examId}&lang=VN`);
 	if (url) {
-		// console.log("url", url);
 		await c.env.CACHE_TIDTU.put(`downloadFile:${examId}`, url, {
 			expirationTtl: 60 * 60 * 24 * 2,
 		});
