@@ -24,7 +24,7 @@ jobs:
       - name: Run build
         run: |
           cd apps/website
-          npm ci --silent
+          npm install
           npm run build
       - name: Publish
         uses: cloudflare/pages-action@v1
