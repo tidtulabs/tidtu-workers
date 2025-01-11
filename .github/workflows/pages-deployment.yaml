@@ -1,4 +1,4 @@
-name: pages deployment
+name: tidtu pages deployment
 on:
   push:
     branches:
