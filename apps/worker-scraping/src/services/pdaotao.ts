@@ -61,55 +61,56 @@ type ExamListResult = {
 };
 
 export const fetchExamList = async (c: Context) => {
-	const { req, env } = c;
-	// const query = req.query()
 	try {
-		const isTotalRequested = req.query("total") || false;
+		const isTotalRequested = c.req.query("total") || false;
 		if (isTotalRequested) {
-			const cachedExamList = await env.CACHE_TIDTU.get("examList:total");
+			const cachedExamList = await c.env.CACHE_TIDTU.get("examList:total");
 			const cachedData: ExamListResult = cachedExamList
 				? JSON.parse(cachedExamList)
 				: null;
 			return {
-				data: cachedData.data,
-				meta: cachedData.meta,
+				data: cachedData?.data,
+				meta: cachedData?.meta,
 			};
 		}
 		const examData = await fetchFirstExamRow();
-		const cachedExamList = await env.CACHE_TIDTU.get("examList:frequency");
+		const cachedExamList = await c.env.CACHE_TIDTU.get("examList:frequency");
 
 		const cachedData: ExamListResult = cachedExamList
 			? JSON.parse(cachedExamList)
 			: null;
+
 		if (
 			examData.title === cachedData?.data[0]?.examTitle &&
 			examData.time === cachedData?.data[0]?.uploadDate
 		) {
 			return {
-				data: cachedData.data,
-				meta: cachedData.meta,
+				data: cachedData?.data,
+				meta: cachedData?.meta,
 			};
 		} else {
-			const isUpdated = await env.CACHE_TIDTU.get("isUpdated");
+			const isUpdated = await c.env.CACHE_TIDTU.get("isUpdated");
 			if (!isUpdated) {
-				const URL = `${process.env.CACHE_SERVICE_API}/api/v1/pdaotao/scraping/cache`;
+				const URL = `${c.env.CACHE_SERVICE_API}/api/v1/pdaotao/scraping/cache`;
+				console.log("URL", URL);
 				fetch(URL, {
 					method: "PUT",
 				})
 					.then((response) => {
-						//console.log("Success:", response);
+						// console.log("Success:", response);
 					})
 					.catch((error) => {
-						//console.error("Error occurred:", error);
+						// console.error("Error occurred:", error);
 					});
 			}
 			return {
-				data: cachedData.data,
-				meta: cachedData.meta,
+				data: cachedData?.data,
+				meta: cachedData?.meta,
 			};
 		}
 	} catch (error: any) {
 		// logger.error(error.message);
+		console.log("error", error);
 		return null;
 	}
 };
