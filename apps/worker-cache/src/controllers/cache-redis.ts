@@ -55,12 +55,16 @@ export const cachedRedis = async (c: Context) => {
 		await env.CACHE_TIDTU.put("examList:total", JSON.stringify(task2));
 		await env.CACHE_TIDTU.delete("isUpdated");
 
-		return c.json({ success: true, message: "create cache redis successfull" });
-		// return res
-		// 	.status(204)
-		// 	.json({ success: true, message: "create cache redis successfull" });
+		c.status(201);
+		return c.json({
+			success: true,
+			message: "create cache redis successfull",
+		});
 	} catch (error: any) {
-		// logger.error(error);
-		// return res.status(500).json({ success: false, message: error.message });
+    c.status(500);
+    return c.json({
+      success: false,
+      message: "something went wrong",
+    });
 	}
 };

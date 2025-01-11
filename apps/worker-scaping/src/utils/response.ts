@@ -1,6 +1,6 @@
 import { Context } from "hono";
 
-export const sendSuccessResponse = (
+export const success = (
 	c: Context,
 	message: string,
 	data: any,
@@ -22,11 +22,7 @@ export const sendSuccessResponse = (
 };
 
 //  errror
-export const sendErrorResponse = (
-	c: Context,
-	message: string,
-	error: any = null,
-) => {
+export const error = (c: Context, message: string, error: any = null) => {
 	c.status(500);
 	return c.json({
 		success: false,
@@ -35,7 +31,7 @@ export const sendErrorResponse = (
 	});
 };
 
-export const sendNotFoundResponse = (c: Context, message: string) => {
+export const notFound = (c: Context, message: string) => {
 	c.status(404);
 	return c.json({
 		success: false,
@@ -43,8 +39,29 @@ export const sendNotFoundResponse = (c: Context, message: string) => {
 		data: null,
 	});
 };
+export const timeout = (c: Context, message: string) => {
+	c.status(408);
+	return c.json({
+		success: false,
+		message,
+		data: null,
+	});
+};
 
-export const sendBadRequestResponse = (c: Context, message: string) => {
+/**
+ @param {Context} c
+ @param {string} message
+ */
+export const serverError = (c: Context, message: string) => {
+	c.status(500);
+	return c.json({
+		success: false,
+		message,
+		data: null,
+	});
+};
+
+export const badRequest = (c: Context, message: string) => {
 	c.status(400);
 	return c.json({
 		success: false,

@@ -1,61 +1,43 @@
-import { sendErrorResponse, sendSuccessResponse } from "utils/response";
-import { getDataExamList, getLinkDownLoad } from "services/pdaotao";
+import * as response from "utils/response";
+import * as services from "services/pdaotao";
 import { Context } from "hono";
 
-export const examList = async (c: Context) => {
+export const getExamList = async (c: Context) => {
 	try {
-		const data = await getDataExamList(c);
-		if (!data) { 
-			return sendErrorResponse(c, "Get exam list failed");
+		const data = await services.fetchExamList(c);
+		if (!data) {
+			return response.error(c, "Get exam list failed");
 		}
-		return sendSuccessResponse(
+		return response.success(
 			c,
 			"Get exam list successfully",
 			data?.data,
 			data.meta,
 		);
 	} catch (err: any) {
-    console.log(err)
-		// logger.error(err.message);
-		return sendErrorResponse(c, err.message);
+    if (err.errorType === "TIMEOUT") {
+      return response.timeout(c, err.message);
+    }
+    return response.serverError(c, err.message);
+		// console.log(err);
+		// return response.error(c, err.message);
 	}
 };
 
-export const getExamDownloadLink = async (c:Context) => {
+export const fetchExamDownloadLink = async (c: Context) => {
 	try {
-    const { req, res } = c;
-		const  examId  = req.param("examId");
-		if (!examId) {
-			logger.error("Invalid exam ID");
-			return sendErrorResponse(res, "Invalid exam ID");
-		}
-		const cachedUrl = await redis.get(`cached:downloadFile:${examId}`);
-		if (cachedUrl) {
-			return sendSuccessResponse(
-				res,
-				"Retrieved exam download link successfully (cached)",
-				{
-					url: cachedUrl,
-				},
-			);
-		}
-
-		const url = await getLinkDownLoad(`EXAM_LIST_Detail/?ID=${examId}&lang=VN`);
-
+		const url = await services.resolveExamDownloadLink(c);
 		if (url) {
-			await redis.set(`cached:downloadFile:${examId}`, url);
-			return sendSuccessResponse(
-				res,
-				"Retrieved exam download link successfully",
-				{
-					url,
-				},
-			);
+			return response.success(c, "Retrieved exam download link successfully", {
+				url,
+			});
 		}
 
-		return sendErrorResponse(res, "Unable to retrieve exam download link");
+		return response.error(c, "Unable to retrieve exam download link");
 	} catch (err: any) {
-		logger.error(err.message);
-		return sendErrorResponse(res, err.message);
+    if (err.errorType === "TIMEOUT") {
+      return response.timeout(c, err.message);
+    }
+		return response.error(c, err.message);
 	}
 };

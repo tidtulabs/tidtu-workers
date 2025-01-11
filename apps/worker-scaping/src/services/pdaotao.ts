@@ -3,7 +3,7 @@ import { scrapingData } from "lib/cheerio";
 // import { logger } from "lib/winston";
 import { extractEndpoint } from "utils/extract-endpoint";
 
-function parseTitleAndTime(input: string) {
+function parseExamTitleAndTime(input: string) {
 	const parts = input
 		.split("\n")
 		.map((part) => part.trim())
@@ -12,15 +12,14 @@ function parseTitleAndTime(input: string) {
 	if (!parts[0] || !parts[1]) {
 		return { title: null, time: null };
 	}
-
 	return {
 		title: parts[0],
 		time: parts[1].replace(/[()]/g, ""),
 	};
 }
 
-export const getFirstRow = async (endpoint: string) => {
-	const scraping = await scrapingData(endpoint);
+export const fetchFirstExamRow = async () => {
+	const scraping = await scrapingData("EXAM_LIST");
 
 	if (!scraping.success || !scraping.data) {
 		throw new Error(scraping.message);
@@ -34,29 +33,14 @@ export const getFirstRow = async (endpoint: string) => {
 		.find("td")
 		.eq(2)
 		.text();
+	// const f = $(".border_main")
+	// .find("table")
+	// .find("tr")
+	// .first()
+	// .find("td").find("img").last().attr("src")?.includes("news.gif")
+	// console.log("f", f);
 
-	return parseTitleAndTime(firstCell);
-};
-
-export const getLinkDownLoad = async (endPoint: string) => {
-	const scraping = await scrapingData(endPoint);
-
-	if (scraping.success === false) {
-		throw new Error(scraping.message);
-	}
-
-	if (scraping.data) {
-		const $ = scraping.data;
-		let urlFile = null;
-		const rows = $(".border_main").find("table").find("tr").first().find("td");
-
-		urlFile = $(rows).find("tr").find("a").eq(1).attr("href");
-
-		if (!urlFile) {
-			throw new Error("File url not found in the page.");
-		}
-		return extractEndpoint(urlFile);
-	}
+	return parseExamTitleAndTime(firstCell);
 };
 
 type ExamItem = {
@@ -76,14 +60,13 @@ type ExamListResult = {
 	};
 };
 
-export const getDataExamList = async (c: Context) => {
+export const fetchExamList = async (c: Context) => {
 	const { req, env } = c;
 	// const query = req.query()
 	try {
 		const isTotalRequested = req.query("total") || false;
 		if (isTotalRequested) {
-			// const cachedExamList = await redis.get("cached:examList:total");
-      const cachedExamList = await env.CACHE_TIDTU.get("examList:total");
+			const cachedExamList = await env.CACHE_TIDTU.get("examList:total");
 			const cachedData: ExamListResult = cachedExamList
 				? JSON.parse(cachedExamList)
 				: null;
@@ -92,11 +75,8 @@ export const getDataExamList = async (c: Context) => {
 				meta: cachedData.meta,
 			};
 		}
-		const examData = await getFirstRow("EXAM_LIST");
-    const cachedExamList =  await env.CACHE_TIDTU.get("examList:frequency");
-  // console.log(cachedExamList)
-
-		// const cachedExamList = await redis.get("cached:examList:frequency");
+		const examData = await fetchFirstExamRow();
+		const cachedExamList = await env.CACHE_TIDTU.get("examList:frequency");
 
 		const cachedData: ExamListResult = cachedExamList
 			? JSON.parse(cachedExamList)
@@ -110,8 +90,7 @@ export const getDataExamList = async (c: Context) => {
 				meta: cachedData.meta,
 			};
 		} else {
-			// const isUpdated = await redis.get("cached:isUpdated");
-      const isUpdated = await env.CACHE_TIDTU.get("isUpdated")
+			const isUpdated = await env.CACHE_TIDTU.get("isUpdated");
 			if (!isUpdated) {
 				const URL = `${process.env.CACHE_SERVICE_API}/api/v1/pdaotao/scraping/cache`;
 				fetch(URL, {
@@ -132,5 +111,43 @@ export const getDataExamList = async (c: Context) => {
 	} catch (error: any) {
 		// logger.error(error.message);
 		return null;
+	}
+};
+
+const getLinkDownLoad = async (endPoint: string) => {
+	const scraping = await scrapingData(endPoint);
+
+	if (scraping.success === false) {
+		throw new Error(scraping.message);
+	}
+
+	if (scraping.data) {
+		const $ = scraping.data;
+		let urlFile = null;
+		const rows = $(".border_main").find("table").find("tr").first().find("td");
+
+		urlFile = $(rows).find("tr").find("a").eq(1).attr("href");
+
+		if (!urlFile) {
+			throw new Error("File url not found in the page.");
+		}
+		return extractEndpoint(urlFile);
+	}
+};
+
+export const resolveExamDownloadLink = async (c: Context) => {
+	const examId = c.req.param("examId");
+	const cachedUrl = await c.env.CACHE_TIDTU.get(`downloadFile:${examId}`);
+	if (cachedUrl) {
+		// console.log("cachedUrl", cachedUrl);
+		return cachedUrl;
+	}
+	const url = await getLinkDownLoad(`EXAM_LIST_Detail/?ID=${examId}&lang=VN`);
+	if (url) {
+		// console.log("url", url);
+		await c.env.CACHE_TIDTU.put(`downloadFile:${examId}`, url, {
+			expirationTtl: 60 * 60 * 24 * 2,
+		});
+		return await getLinkDownLoad(`EXAM_LIST_Detail/?ID=${examId}&lang=VN`);
 	}
 };

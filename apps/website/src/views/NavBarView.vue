@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { RouterLink, useRouter } from "vue-router";
-import { BookOpenIcon } from "@heroicons/vue/24/outline";
+import { IconBook } from "@tabler/icons-vue";
 const router = useRouter();
 
 const navItems = [
   {
     title: "Danh sách thi",
-    icon: BookOpenIcon,
+    icon: IconBook,
     to: "/pdaotao/examlist",
     active: router.currentRoute.value.path === "/pdaotao/examlist",
   },

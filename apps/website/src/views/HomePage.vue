@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { DocumentMagnifyingGlassIcon } from "@heroicons/vue/24/outline";
 import EvaluationIcon from "@/assets/icons/evaluation.svg";
+import FindExamListIcon from "@/assets/icons/find-exam-list.svg";
 import {
   Card,
   CardContent,
@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 
 const cards = [
   {
-    title: DocumentMagnifyingGlassIcon,
+    title: FindExamListIcon,
     description: "Tìm Nhanh danh sách thi đại học Duy Tân (DTU)",
     content:
       "Một công cụ giúp bạn tìm kiếm, tải xuống danh sách thi phòng đào tạo đại học Duy Tân nhanh chóng và dễ dàng",

@@ -94,6 +94,7 @@ module.exports = {
 				"collapsible-down": "collapsible-down 0.2s ease-in-out",
 				"collapsible-up": "collapsible-up 0.2s ease-in-out",
 				"spin-slow": "spin 10s linear infinite",
+        "spin-fast": "spin 1s linear infinite",
 				move: "move 5s ease-in-out infinite",
 			},
 		},

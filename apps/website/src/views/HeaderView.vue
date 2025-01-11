@@ -1,16 +1,25 @@
 <script setup lang="ts">
 import Logo from "@/assets/icons/logo.svg";
-import githubIcon from "@/assets/icons/github.svg";
-import { Bars3Icon, SunIcon, MoonIcon } from "@heroicons/vue/24/outline";
+import {
+  IconSunHigh,
+  IconBrandGithub,
+  IconMoonStars,
+  IconSunMoon,
+  IconMenu2,
+} from "@tabler/icons-vue";
 import { useColorMode } from "@vueuse/core";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { RouterLink } from "vue-router";
 import NavBarMobileView from "./NavBarMobileView.vue";
-const colorMode = useColorMode();
+const colorMode = useColorMode({
+  emitAuto: true,
+});
 
 const toggleColorMode = () => {
-  colorMode.store.value = colorMode.store.value === "dark" ? "light" : "dark" ;
+  colorMode.store.value = colorMode.store.value === "dark" ? "light" : colorMode.store.value === "light" ? "auto" : "dark";
 };
+
+
 </script>
 <template>
   <div class="flex w-full justify-between items-center">
@@ -28,18 +37,25 @@ const toggleColorMode = () => {
         <button
           class="rounded-md gap-x-1.5 p-1.5 text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
         >
-          <githubIcon class="w-6 h-6" />
+          <!--   <githubIcon class="w-6 h-6" /> -->
+          <IconBrandGithub class="w-6 h-6" />
         </button>
       </a>
       <button
         class="rounded-md gap-x-1 p-1 text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
       >
-        <SunIcon
+        <IconSunMoon
+          v-if="colorMode === 'auto'"
+          class="w-6 h-6"
+          @click="toggleColorMode"
+        />
+
+        <IconSunHigh
           v-if="colorMode === 'light'"
           class="w-6 h-6 animate-spin-slow"
           @click="toggleColorMode"
         />
-        <MoonIcon
+        <IconMoonStars
           v-if="colorMode === 'dark'"
           class="w-6 h-6"
           @click="toggleColorMode"
@@ -49,7 +65,7 @@ const toggleColorMode = () => {
       <div class="md:hidden flex items-center">
         <Sheet>
           <SheetTrigger>
-            <Bars3Icon class="w-6 h-6 hover:text-primary"
+            <IconMenu2 class="w-6 h-6 hover:text-primary"
           /></SheetTrigger>
           <SheetContent>
             <!-- <SheetHeader> -->

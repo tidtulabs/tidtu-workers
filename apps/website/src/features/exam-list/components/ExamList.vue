@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import {
-  DocumentArrowDownIcon,
-  SparklesIcon,
-  QuestionMarkCircleIcon,
-} from "@heroicons/vue/24/outline";
+  IconFileDownload,
+  IconLoader3,
+  IconHelpOctagon,
+  IconSparkles,
+} from "@tabler/icons-vue";
 import type {
   ColumnDef,
   ColumnFiltersState,
@@ -50,6 +51,7 @@ interface ExamItem {
   isNew: boolean; // Cờ đánh dấu bài thi có mới hay không
   pagination: number; //  phân trang hiện tại
   row: number; // Số thứ tự dòng bài thi trong bảng
+  isDown?: boolean;
 }
 
 type FetchResponse = {
@@ -110,7 +112,7 @@ const fetchPage = async (total: boolean) => {
     return data;
   } catch (error: any) {
     error.value = true;
-   /* toast({
+    /* toast({
       title: "Lỗi",
       description: "Vui lòng thử lại sau",
       variant: "error",
@@ -121,7 +123,7 @@ const fetchPage = async (total: boolean) => {
   }
 };
 
-console.log(error.value);
+// console.log(error.value);
 onMounted(async () => {
   isMounted.value = true;
   // console.log("mounted");
@@ -203,8 +205,8 @@ const columns: ColumnDef<ExamItem>[] = [
         text as string,
         h("span", { class: "text-xs text-gray-500" }, [
           isNew
-            ? h(SparklesIcon, {
-                class: "w-4 h-4 text-yellow-500 animate-pulse",
+            ? h(IconSparkles, {
+                class: "w-4 h-4 text-yellow-500 animate-pulse stroke-1",
               })
             : null,
         ]),
@@ -216,11 +218,19 @@ const columns: ColumnDef<ExamItem>[] = [
     accessorKey: "examDetailsUrl",
     header: "Tải xuống",
     cell: ({ row }) => {
+      if (row.original.isDown === undefined) {
+        row.original.isDown = false;
+      }
+      // row.original.isDown = ref(false);
+      // const isDown = ref(false);
       const handleClick = async () => {
-        const msg = toast({
-          title: "Đang gửi yêu cầu",
-          description: "Vui lòng chờ trong giây lát",
-        });
+        // const msg = toast({
+        //   title: "Đang gửi yêu cầu",
+        //   description: "Vui lòng chờ trong giây lát",
+        // });
+        row.original.isDown = true;
+        // isDown.value = true;
+        // console.log(isDown.value);
 
         // console.log("Downloading from:", row.original.href);
         const match = /ID=(\d+)/.exec(row.original.examDetailsUrl);
@@ -233,7 +243,7 @@ const columns: ColumnDef<ExamItem>[] = [
           console.error("Cannot found href.");
         }
 
-        console.log("Downloading from:", row.original.examDetailsUrl);
+        // console.log("Downloading from:", row.original.examDetailsUrl);
         const r = await fetch(
           `${import.meta.env.VITE_API_URL}/api/v1/pdaotao/scraping/examlist/${id}`,
         );
@@ -251,10 +261,13 @@ const columns: ColumnDef<ExamItem>[] = [
           a.click();
           document.body.removeChild(a);
           isDownloading.value = false;
-           msg.dismiss();
+          // isDown.value = false;
+          row.original.isDown = false;
+
+          // msg.dismiss();
         } else {
           isDownloading.value = false;
-           msg.dismiss();
+          // msg.dismiss();
           toast({
             title: "Lỗi",
             description: res?.message,
@@ -269,11 +282,15 @@ const columns: ColumnDef<ExamItem>[] = [
             handleClick();
           },
         },
-
-        h(DocumentArrowDownIcon, {
-          class:
-            "w-6 h-6 cursor-pointer mx-auto text-primary/80 hover:text-primary hover:scale-150 transition-transform ease-in-out",
-        }),
+        row.original.isDown
+          ? h(IconLoader3, {
+              class:
+                "w-6 h-6 cursor-pointer mx-auto text-primary/80 animate-spin-fast pointer-events-none",
+            })
+          : h(IconFileDownload, {
+              class:
+                "w-7 h-7 stroke-[1.25] cursor-pointer mx-auto text-primary/80 hover:text-primary hover:scale-150 transition-transform ease-in-out",
+            }),
       );
     },
   },
@@ -396,7 +413,7 @@ const table = useVueTable({
       </div>
       <Popover>
         <PopoverTrigger>
-          <QuestionMarkCircleIcon class="w-5 h-5 text-primary" />
+          <IconHelpOctagon class="w-5 h-5 text-primary" />
         </PopoverTrigger>
         <PopoverContent>
           <p>Theo mặc định hệ thống tự tải những danh sách mới nhất</p>
