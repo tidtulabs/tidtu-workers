@@ -91,8 +91,8 @@ export const fetchExamList = async (c: Context) => {
 		} else {
 			const isUpdated = await c.env.CACHE_TIDTU.get("isUpdated");
 			if (!isUpdated) {
-				const URL = `${c.env.CACHE_SERVICE_API}/api/v1/pdaotao/scraping/cache`;
-				console.log("URL", URL);
+				const URL = `${c.env.CACHE_SERVICE_API}/api/v1/pdaotao/scraping/examlist`;
+				// console.log("URL", URL);
 				fetch(URL, {
 					method: "PUT",
 				})
@@ -110,7 +110,7 @@ export const fetchExamList = async (c: Context) => {
 		}
 	} catch (error: any) {
 		// logger.error(error.message);
-		console.log("error", error);
+		// console.log("error", error);
 		return null;
 	}
 };
