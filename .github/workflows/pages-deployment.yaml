@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'apps/website/**'
+      - '.github/workflows/pages-deployment.yaml'
 jobs:
   deploy:
     runs-on: ubuntu-latest
