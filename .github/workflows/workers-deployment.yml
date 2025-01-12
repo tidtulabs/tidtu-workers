@@ -14,10 +14,6 @@ jobs:
       deployments: write
     steps:
       - uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
       - name: Build & Deploy Worker
         uses: cloudflare/wrangler-action@v3 
         with:
