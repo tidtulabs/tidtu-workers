@@ -15,7 +15,7 @@ node_modules
 .env
 .env.production
 .dev.var
-wrangler.toml
+# wrangler.toml
 
 # Testing
 coverage

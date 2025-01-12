@@ -1,5 +1,5 @@
 #:schema node_modules/wrangler/config-schema.json
-name = "worker-scaping"
+name = "worker-scraping"
 main = "src/index.ts"
 compatibility_date = "2024-12-30"
 
@@ -21,7 +21,9 @@ enabled = true
 # - https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
 # Note: Use secrets to store sensitive data.
 # - https://developers.cloudflare.com/workers/configuration/secrets/
-# [vars]
+[vars]
+CORS_ORIGIN = "https://tidtu.pages.dev"
+CACHE_SERVICE_API = "https://cache-service-p6ko.onrender.com"
 # MY_VARIABLE = "production_value"
 # CORS_ORIGIN= "http://localhost:5173"
 
@@ -77,8 +79,8 @@ enabled = true
 
 [[kv_namespaces]]
 binding = "CACHE_TIDTU"
-id = <id>
-preview_id = <preview_id>
+id = "870366651c214fde9712a9c26d1b2b23"
+preview_id = "e005913ce4b04361815155aed5a3e2dc"
 
 # [[kv_namespaces]]
 # binding = "assets"
