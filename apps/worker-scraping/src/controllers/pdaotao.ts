@@ -29,7 +29,7 @@ export const fetchExamDownloadLink = async (c: Context) => {
 		const url = await services.resolveExamDownloadLink(c);
 		if (url) {
 			return response.success(c, "Retrieved exam download link successfully", {
-				url,
+				url: `https://pdaotao.duytan.edu.vn/${url}`
 			});
 		}
 
