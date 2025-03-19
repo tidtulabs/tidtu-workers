@@ -5,7 +5,7 @@ on:
       - main
     paths:
       - 'apps/worker-download/**'
-      # - '.github/workflows/worker-download-deployment.yml'
+      - '.github/workflows/worker-download-deployment.yml'
 jobs:
   deploy:
     runs-on: ubuntu-latest
