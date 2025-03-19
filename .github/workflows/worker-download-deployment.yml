@@ -7,17 +7,30 @@ on:
       - 'apps/worker-download/**'
       - '.github/workflows/worker-download-deployment.yml'
 jobs:
-   deploy:
+  deploy:
     runs-on: ubuntu-latest
-    name: Deploy
+    permissions:
+      contents: read
+      deployments: write
     steps:
-      - uses: actions/checkout@v4
-      - name: Deploy
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: install pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build & Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
+          wranglerVersion: "3.96.0"
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_WORKERS }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: "apps/worker-download/"
+          packageManager: pnpm
           # projectName: tidtu # e.g. 'my-project'
           # directory:  apps/website/dist # e.g. 'dist'
           # gitHubToken: ${{ secrets.TOKEN_GITHUB }}
