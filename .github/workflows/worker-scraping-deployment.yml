@@ -5,7 +5,7 @@ on:
       - main
     paths:
       - 'apps/worker-scraping/**'
-      - '.github/workflows/worker-scraping-deployment.yml'
+      # - '.github/workflows/worker-scraping-deployment.yml'
 jobs:
   deploy:
     runs-on: ubuntu-latest
