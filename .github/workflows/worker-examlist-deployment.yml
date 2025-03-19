@@ -4,7 +4,7 @@ on:
     branches:
       - main
     paths:
-      - 'apps/worker-scraping/**'
+      - 'apps/worker-examlist/**'
       # - '.github/workflows/worker-scraping-deployment.yml'
 jobs:
   deploy:
@@ -28,7 +28,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_WORKERS }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: "apps/worker-scraping/"
+          workingDirectory: "apps/worker-examlist/"
           # projectName: tidtu # e.g. 'my-project'
           # directory:  apps/website/dist # e.g. 'dist'
           # gitHubToken: ${{ secrets.TOKEN_GITHUB }}
