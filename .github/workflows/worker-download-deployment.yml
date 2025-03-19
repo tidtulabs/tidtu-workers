@@ -20,7 +20,9 @@ jobs:
         with:
           node-version: 20
       - name: install pnpm
-        run: npm install -g pnpm
+        run: npm install -g pnpm 
+      - name: Install Workerd
+        run: pnpm add workerd@1.20241230.0 --global
       - name: Build & Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
