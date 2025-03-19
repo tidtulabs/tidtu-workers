@@ -22,7 +22,7 @@ jobs:
       - name: install pnpm
         run: npm install -g pnpm 
       - name: Install Workerd
-        run: pnpm add -g workerd
+        run: npm add -g workerd
       - name: Build & Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
