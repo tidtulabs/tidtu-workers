@@ -1,11 +1,11 @@
-name: Deploy to workers
+name: Deploy to workers download
 on:
   push:
     branches:
       - main
     paths:
-      - 'apps/worker-scraping/**'
-      - '.github/workflows/workers-deployment.yaml'
+      - 'apps/worker-download/**'
+      - '.github/workflows/worker-download-deployment.yml'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -26,7 +26,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_WORKERS }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: "apps/worker-scraping/"
+          workingDirectory: "apps/worker-download/"
           # projectName: tidtu # e.g. 'my-project'
           # directory:  apps/website/dist # e.g. 'dist'
           # gitHubToken: ${{ secrets.TOKEN_GITHUB }}
