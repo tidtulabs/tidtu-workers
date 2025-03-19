@@ -27,6 +27,7 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN_WORKERS }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: "apps/worker-download/"
+          packageManager: pnpm
           # projectName: tidtu # e.g. 'my-project'
           # directory:  apps/website/dist # e.g. 'dist'
           # gitHubToken: ${{ secrets.TOKEN_GITHUB }}
