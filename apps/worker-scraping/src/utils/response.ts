@@ -56,6 +56,7 @@ export const serverError = (c: Context, message: string) => {
 	c.status(500);
 	return c.json({
 		success: false,
+    typeError: "SERVER_ERROR",
 		message,
 		data: null,
 	});
@@ -69,3 +70,14 @@ export const badRequest = (c: Context, message: string) => {
 		data: null,
 	});
 };
+
+
+export const limitExceeded = (c: Context, message: string) => {
+  c.status(429);
+  return c.json({
+    success: false,
+    typeError: "RATE_LIMIT_EXCEEDED",
+    message,
+    data: null,
+  });
+}

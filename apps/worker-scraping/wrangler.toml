@@ -118,3 +118,10 @@ preview_id = "e005913ce4b04361815155aed5a3e2dc"
 # [[vectorize]]
 # binding = "MY_INDEX"
 # index_name = "my-index"
+
+# Free user rate limiting
+[[unsafe.bindings]]
+name = "MY_RATE_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 10, period = 10 }

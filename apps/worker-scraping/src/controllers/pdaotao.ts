@@ -15,11 +15,11 @@ export const getExamList = async (c: Context) => {
 			data.meta,
 		);
 	} catch (err: any) {
-    if (err.errorType === "TIMEOUT") {
-      return response.timeout(c, err.message);
-    }
-    return response.serverError(c, err.message);
+		if (err.errorType === "TIMEOUT") {
+			return response.timeout(c, err.message);
+		}
 		// console.log(err);
+		return response.serverError(c, err.message);
 		// return response.error(c, err.message);
 	}
 };
@@ -29,15 +29,15 @@ export const fetchExamDownloadLink = async (c: Context) => {
 		const url = await services.resolveExamDownloadLink(c);
 		if (url) {
 			return response.success(c, "Retrieved exam download link successfully", {
-				url: `https://pdaotao.duytan.edu.vn/${url}`
+				url: `https://pdaotao.duytan.edu.vn/${url}`,
 			});
 		}
 
 		return response.error(c, "Unable to retrieve exam download link");
 	} catch (err: any) {
-    if (err.errorType === "TIMEOUT") {
-      return response.timeout(c, err.message);
-    }
+		if (err.errorType === "TIMEOUT") {
+			return response.timeout(c, err.message);
+		}
 		return response.error(c, err.message);
 	}
 };

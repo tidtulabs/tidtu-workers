@@ -1,7 +1,7 @@
 {
 	"name": "worker-cache",
 	"scripts": {
-		"dev": "wrangler --port 3002 dev",
+		"dev": "wrangler --port 3005 dev",
 		"deploy": "wrangler deploy --minify",
 		"cf-typegen": "wrangler types --env-interface CloudflareBindings"
 	},
