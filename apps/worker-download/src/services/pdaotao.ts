@@ -124,7 +124,6 @@ export const fetchExamList = async (c: Context) => {
 
 const getLinkDownLoad = async (endPoint: string) => {
 	const scraping = await scrapingData(endPoint);
-
 	if (scraping.success === false) {
 		throw new Error(scraping.message);
 	}
@@ -147,7 +146,6 @@ export const resolveExamDownloadLink = async (c: Context) => {
 	const examId = c.req.param("examId");
 	const cachedUrl = await c.env.CACHE_TIDTU.get(`downloadFile:${examId}`);
 	if (cachedUrl) {
-		// console.log("cachedUrl", cachedUrl);
 		return cachedUrl;
 	}
 	const url = await getLinkDownLoad(`EXAM_LIST_Detail/?ID=${examId}&lang=VN`);
@@ -155,6 +153,6 @@ export const resolveExamDownloadLink = async (c: Context) => {
 		await c.env.CACHE_TIDTU.put(`downloadFile:${examId}`, url, {
 			expirationTtl: 60 * 60 * 24 * 2,
 		});
-		return await getLinkDownLoad(`EXAM_LIST_Detail/?ID=${examId}&lang=VN`);
+		return url;
 	}
 };
