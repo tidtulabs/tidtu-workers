@@ -1,5 +1,6 @@
 import { Context } from "hono";
 import { scrapingData } from "lib/cheerio";
+import { checkFileExtension, checkFileType } from "utils/check-file";
 // import { logger } from "lib/winston";
 import { extractEndpoint } from "utils/extract-endpoint";
 
@@ -85,7 +86,7 @@ export const fetchExamList = async (c: Context) => {
 			examData.time === cachedData?.data[0]?.uploadDate
 		) {
 			return {
-				data: cachedData?.data || [], 
+				data: cachedData?.data || [],
 				meta: cachedData?.meta,
 			};
 		} else {
@@ -144,15 +145,29 @@ const getLinkDownLoad = async (endPoint: string) => {
 
 export const resolveExamDownloadLink = async (c: Context) => {
 	const examId = c.req.param("examId");
-	const cachedUrl = await c.env.CACHE_TIDTU.get(`downloadFile:${examId}`);
+	const cacheKey = `downloadFile:${examId}`;
+	const cachedUrl = await c.env.CACHE_TIDTU.get(cacheKey);
+
 	if (cachedUrl) {
 		return cachedUrl;
 	}
+
 	const url = await getLinkDownLoad(`EXAM_LIST_Detail/?ID=${examId}&lang=VN`);
+
 	if (url) {
-		await c.env.CACHE_TIDTU.put(`downloadFile:${examId}`, url, {
-			expirationTtl: 60 * 60 * 24 * 2,
-		});
-		return url;
+		if (checkFileExtension(url)) {
+			await c.env.CACHE_TIDTU.put(cacheKey, url, {
+				expirationTtl: 60 * 60 * 24 * 2,
+			});
+			return url;
+		} else {
+			if (await checkFileType(url)) {
+				await c.env.CACHE_TIDTU.put(cacheKey, url, {
+					expirationTtl: 60 * 60 * 24 * 2,
+				});
+				return url;
+			}
+		}
 	}
+	return null;
 };

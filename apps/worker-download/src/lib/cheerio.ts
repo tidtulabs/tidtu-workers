@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { BASE_URL } from "utils/base-url";
 
 type ScrapingResult = {
 	success: boolean;
@@ -7,10 +8,9 @@ type ScrapingResult = {
   errorType?: "TIMEOUT" | "SERVER_ERROR" 
 };
 
-const BASE_URL = "https://pdaotao.duytan.edu.vn/";
 const scrapingData = async (endPoint: string): Promise<ScrapingResult> => {
 	try {
-		const response = await fetch(`${BASE_URL}${endPoint}`, {
+		const response = await fetch(`${BASE_URL}/${endPoint}`, {
 			signal: AbortSignal.timeout(20000),
 		});
 

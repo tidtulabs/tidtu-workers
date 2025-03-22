@@ -31,11 +31,12 @@ export const error = (c: Context, message: string, error: any = null) => {
 	});
 };
 
-export const notFound = (c: Context, message: string) => {
+export const notFound = (c: Context, message: string, typeError?:string) => {
 	c.status(404);
 	return c.json({
 		success: false,
 		message,
+    typeError: typeError || "NOT_FOUND",
 		data: null,
 	});
 };
